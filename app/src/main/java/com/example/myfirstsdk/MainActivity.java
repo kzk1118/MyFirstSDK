@@ -1,14 +1,11 @@
 package com.example.myfirstsdk;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.DataInput;
 import java.io.IOException;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 /**
  * HTTP通信でJSONを取得し、パース処理するクラス。
@@ -18,17 +15,25 @@ import okhttp3.ResponseBody;
  */
 public class MainActivity {
     public JsonDto getJSON() throws IOException {
-        String url = "https://jsonplaceholder.typicode.com/posts/1";
-        OkHttpClient client = new OkHttpClient();
 
-        Request request = new Request.Builder().url(url).build();
+        // エンドポイント
+        String url = "https://jsonplaceholder.typicode.com/posts/1";
+
+        // HTTP通信でJSONを取得
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .get()
+                .url(url)
+                .build();
         Call call = client.newCall(request);
         Response response = call.execute();
-        ResponseBody body = response.body();
+        String json = response.body().string();
 
+        // パース処理
         ObjectMapper mapper = new ObjectMapper();
-        JsonDto jsonDto = mapper.readValue((DataInput) body, JsonDto.class);
+        JsonDto jsonDto = mapper.readValue(json, JsonDto.class);
 
+        // DTOオブジェクトを返す
         return jsonDto;
     }
 }
